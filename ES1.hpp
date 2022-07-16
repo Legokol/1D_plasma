@@ -11,6 +11,7 @@
 struct Particle {
     const double m; // Масса частицы
     const double q; // Заряд частицы
+    const double qm = q / m; // Удельный заряд
     double x; // Координата частицы в момент времени t
     double v; // Скорость частицы в момент времени t - dt/2
 };
@@ -65,8 +66,7 @@ void ES1::moveParticles() {
         // Обновление координаты
         particles[i].x += particles[i].v * timeStep;
         // Обновление скорости
-        // TODO: Ввести удельный заряд q/m
-        particles[i].v += particles[i].q * interpolateField(particles[i]) / particles[i].m;
+        particles[i].v += particles[i].qm * interpolateField(particles[i]);
 
         // TODO: Учесть периодичность сетки, то есть перенос из последней ячейки в первую и наоборот
     }
