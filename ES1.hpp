@@ -26,11 +26,11 @@ private:
         double E; // Проекция напряжённости электрического поля на ось x
     };
 
-    const double timeStep; // Шаг по времени
-    const double step; // Шаг сетки
-    const double L; // Суммарная длина сетки
+    const double _timeStep; // Шаг по времени
+    const double _step; // Шаг сетки
+    const double _L; // Суммарная длина сетки
 
-    std::vector<Particle> particles; // Массив частиц
+    std::vector<Particle> _particles; // Массив частиц
     std::vector<Cell> grid; // Расчётная сетка
 
     void weighting(); // Взвешивание
@@ -40,7 +40,7 @@ private:
     void moveParticles(); // Движение частиц
 
 public:
-    ES1();
+    ES1(double timeStep, double step, double L, const std::vector<Particle> &particles);
 };
 
 #endif //INC_1D_PLASMA_ES1_HPP
