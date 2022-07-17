@@ -8,6 +8,7 @@
 #include <vector>
 #include <cmath>
 
+#include "Constants.hpp"
 #include "FourierTransform.hpp"
 
 struct Particle {
@@ -27,6 +28,12 @@ private:
         double rho; // Плотность заряда
         double E; // Проекция напряжённости электрического поля на ось x
     };
+
+    const FourierTransform fourierTransform;
+
+    std::vector<double> frequency; // Частоты преобразования Фурье
+    std::vector<double> frequency1; // Частоты преобразования Фурье, домноженные на sin(k dx) / k dx
+    std::vector<double> frequency2; // Частоты преобразования Фурье, домноженные на sin(k dx / 2) / (k dx / 2)
 
     const double _timeStep; // Шаг по времени
     const double _step; // Шаг сетки

@@ -12,7 +12,21 @@ ES1::ES1(double timeStep, double step, double L, const std::vector<Particle> &pa
     for (int i = 0; i < grid.size(); ++i) {
         grid[i] = Cell{i * step, 0, 0};
     }
-    // Расчёт плотности и электрического поля
+    // Расчёт частот
+    frequency = fourierTransform.frequency();
+    frequency1.resize(frequency.size());
+    frequency2.resize(frequency.size());
+    for (int i = 0; i < frequency.size(); ++i) {
+        if (frequency[i] == 0) {
+            frequency1[i] = frequency[i];
+            frequency2[i] = frequency[i];
+        } else {
+            frequency1[i] = frequency[i] * std::sin(frequency[i] * _step) / (frequency[i] * _step);
+            frequency2[i] = frequency[i] * std::sin(frequency[i] * _step / 2) / (frequency[i] * _step / 2);
+        }
+    }
+
+    // Расчёт плотности заряда и электрического поля
     weighting();
     // Пересчёт скорости из момента t = 0 в t = - dt / 2
     for (int i = 0; i < _particles.size(); ++i) {
@@ -22,6 +36,7 @@ ES1::ES1(double timeStep, double step, double L, const std::vector<Particle> &pa
 
 void ES1::weighting() {
     std::vector<double> rho(grid.size() - 1);
+    // Расчёт плотности заряда
     grid[0].rho = 0;
     for (int i = 0; i < grid.size() - 1; ++i) {
         grid[i + 1].rho = 0;
@@ -36,9 +51,20 @@ void ES1::weighting() {
     grid.back().rho += grid[0].rho;
     grid[0].rho = grid.back().rho;
     rho[0] = grid[0].rho;
-
-
+    // Расчёт потенциала и электрического поля
     std::vector<complexd> rhoImage = fourierTransform.transform(rho);
+    std::vector<complexd> phiImage(rhoImage.size());
+    std::vector<complexd> EImage(rhoImage.size());
+    // TODO: Можно убрать вектор phiImage
+    for (int i = 0; i < rhoImage.size(); ++i) {
+        phiImage[i] = rhoImage[i] / (epsilon0 * frequency2[i] * frequency2[i]);
+        EImage[i] = complexd(0, -frequency1[i]) * phiImage[i];
+    }
+    std::vector<complexd> E = fourierTransform.inverse(EImage);
+    for (int i = 0; i < grid.size() - 1; ++i) {
+        grid[i].E = E[i].real();
+    }
+    grid.back().E = grid[0].E;
 }
 
 double ES1::interpolateField(const Particle &particle) {
