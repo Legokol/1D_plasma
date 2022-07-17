@@ -11,6 +11,12 @@ ES1::ES1(double timeStep, double step, double L, const std::vector<Particle> &pa
     for (int i = 0; i < grid.size(); ++i) {
         grid[i] = Cell{i * step, 0, 0};
     }
+    // Расчёт плотности и электрического поля
+    weighting();
+    // Пересчёт скорости из момента t = 0 в t = - dt / 2
+    for (int i = 0; i < _particles.size(); ++i) {
+        _particles[i].v -= _particles[i].qm * interpolateField(_particles[i]) * _timeStep / 2;
+    }
 }
 
 void ES1::weighting() {
@@ -24,6 +30,9 @@ void ES1::weighting() {
             }
         }
     }
+    grid.back().rho += grid[0].rho;
+    grid[0].rho = grid.back().rho;
+    // TODO: Добавить расчёт поля
 }
 
 double ES1::interpolateField(const Particle &particle) {
@@ -39,8 +48,13 @@ void ES1::moveParticles() {
         // Обновление координаты
         _particles[i].x += _particles[i].v * _timeStep;
         // Обновление скорости
-        _particles[i].v += _particles[i].qm * interpolateField(_particles[i]);
-
-        // TODO: Учесть периодичность сетки, то есть перенос из последней ячейки в первую и наоборот
+        _particles[i].v += _particles[i].qm * interpolateField(_particles[i]) * _timeStep;
+        // Перенос частиц с учётом периодичности
+        if (_particles[i].x > _L) {
+            _particles[i].x -= _L;
+        }
+        if (_particles[i].x < 0) {
+            _particles[i].x += _L;
+        }
     }
 }

@@ -8,6 +8,8 @@
 #include <vector>
 #include <cmath>
 
+#include "FourierTransform.hpp"
+
 struct Particle {
     const double m; // Масса частицы
     const double q; // Заряд частицы
