@@ -60,10 +60,13 @@ void ES1::weighting() {
         phiImage[i] = rhoImage[i] / (epsilon0 * frequency2[i] * frequency2[i]);
         EImage[i] = complexd(0, -frequency1[i]) * phiImage[i];
     }
+    std::vector<complexd> phi = fourierTransform.inverse(phiImage);
     std::vector<complexd> E = fourierTransform.inverse(EImage);
     for (int i = 0; i < grid.size() - 1; ++i) {
+        grid[i].phi = phi[i].real();
         grid[i].E = E[i].real();
     }
+    grid.back().phi = grid[0].phi;
     grid.back().E = grid[0].E;
 }
 
@@ -89,4 +92,12 @@ void ES1::moveParticles() {
             _particles[i].x += _L;
         }
     }
+}
+
+void ES1::saveGrid(double time, std::ofstream &writer) const {
+    writer << time << ',';
+    for (int i = 0; i < grid.size(); ++i) {
+        writer << grid[i].rho << ',' << grid[i].phi << ',' << grid[i].E << ',';
+    }
+    writer << std::endl;
 }

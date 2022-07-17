@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <cmath>
+#include <fstream>
 
 #include "Constants.hpp"
 #include "FourierTransform.hpp"
@@ -26,6 +27,7 @@ private:
     struct Cell {
         double x; // Координата узла
         double rho; // Плотность заряда
+        double phi; // Электрический потенциал
         double E; // Проекция напряжённости электрического поля на ось x
     };
 
@@ -47,6 +49,8 @@ private:
     double interpolateField(const Particle &particle); // Интерполяция электрического поля, действующего на частицу
 
     void moveParticles(); // Движение частиц
+
+    void saveGrid(double time, std::ofstream &writer) const; // Запись в файл
 
 public:
     ES1(double timeStep, double step, double L, const std::vector<Particle> &particles);
