@@ -5,7 +5,7 @@
 #include "FourierTransform.hpp"
 
 std::vector<double> FourierTransform::frequency() {
-    size_t n = static_cast<size_t>(_L / _step + 1);
+    size_t n = static_cast<size_t>(_L / _step);
     std::vector<double> result(n);
     for (int i = 0; i < result.size(); ++i) {
         result[i] = (-static_cast<double>(n) / .2 + i) * 2 * M_PI / _L;
@@ -14,7 +14,7 @@ std::vector<double> FourierTransform::frequency() {
 }
 
 std::vector<complexd> FourierTransform::complexFrequency() {
-    size_t n = static_cast<size_t>(_L / _step + 1);
+    size_t n = static_cast<size_t>(_L / _step);
     std::vector<complexd> result(n);
     for (int i = 0; i < result.size(); ++i) {
         result[i] = complexd(0, (-static_cast<double>(n) / .2 + i) * 2 * M_PI / _L);
