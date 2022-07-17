@@ -4,7 +4,7 @@
 
 #include "FourierTransform.hpp"
 
-std::vector<double> FourierTransform::frequency() {
+std::vector<double> FourierTransform::frequency() const {
     size_t n = static_cast<size_t>(_L / _step);
     std::vector<double> result(n);
     for (int i = 0; i < result.size(); ++i) {
@@ -13,7 +13,7 @@ std::vector<double> FourierTransform::frequency() {
     return result;
 }
 
-std::vector<complexd> FourierTransform::complexFrequency() {
+std::vector<complexd> FourierTransform::complexFrequency() const {
     size_t n = static_cast<size_t>(_L / _step);
     std::vector<complexd> result(n);
     for (int i = 0; i < result.size(); ++i) {
@@ -22,7 +22,7 @@ std::vector<complexd> FourierTransform::complexFrequency() {
     return result;
 }
 
-std::vector<complexd> FourierTransform::transform(const std::vector<double> &preimage) {
+std::vector<complexd> FourierTransform::transform(const std::vector<double> &preimage) const {
     std::vector<complexd> result(preimage.size());
     // Пространственные частоты, домноженные на i
     std::vector<complexd> ik = complexFrequency();
@@ -37,7 +37,7 @@ std::vector<complexd> FourierTransform::transform(const std::vector<double> &pre
     return result;
 }
 
-std::vector<complexd> FourierTransform::inverse(const std::vector<complexd> &image) {
+std::vector<complexd> FourierTransform::inverse(const std::vector<complexd> &image) const {
     std::vector<complexd> result(image.size());
     // Пространственные частоты, домноженные на i
     std::vector<complexd> ik = complexFrequency();

@@ -5,7 +5,8 @@
 #include "ES1.hpp"
 
 ES1::ES1(double timeStep, double step, double L, const std::vector<Particle> &particles) : _timeStep(timeStep),
-                                                                                           _step(step), _L(L) {
+                                                                                           _step(step), _L(L),
+                                                                                           fourierTransform(step, L) {
     int n = static_cast<int>(_L / _step + 1);
     grid.resize(n);
     for (int i = 0; i < grid.size(); ++i) {
@@ -20,8 +21,9 @@ ES1::ES1(double timeStep, double step, double L, const std::vector<Particle> &pa
 }
 
 void ES1::weighting() {
+    std::vector<double> rho(grid.size() - 1);
     grid[0].rho = 0;
-    for (int i = 0; i < grid.size(); ++i) {
+    for (int i = 0; i < grid.size() - 1; ++i) {
         grid[i + 1].rho = 0;
         for (int j = 0; j < _particles.size() - 1; ++j) {
             if (_particles[j].x - grid[i].x < _step && _particles[j].x > grid[i].x) {
@@ -29,10 +31,14 @@ void ES1::weighting() {
                 grid[i + 1].rho += _particles[j].q * (_particles[i].x - grid[i].x) / _step;
             }
         }
+        rho[i] = grid[i].rho;
     }
     grid.back().rho += grid[0].rho;
     grid[0].rho = grid.back().rho;
-    // TODO: Добавить расчёт поля
+    rho[0] = grid[0].rho;
+
+
+    std::vector<complexd> rhoImage = fourierTransform.transform(rho);
 }
 
 double ES1::interpolateField(const Particle &particle) {
