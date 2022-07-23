@@ -8,6 +8,8 @@
 #include <vector>
 #include <cmath>
 #include <fstream>
+#include <string>
+#include <filesystem>
 
 #include "Constants.hpp"
 #include "FourierTransform.hpp"
@@ -37,11 +39,11 @@ private:
     std::vector<double> frequency1; // Частоты преобразования Фурье, домноженные на sin(k dx) / k dx
     std::vector<double> frequency2; // Частоты преобразования Фурье, домноженные на sin(k dx / 2) / (k dx / 2)
 
-    const double _timeStep; // Шаг по времени
-    const double _step; // Шаг сетки
-    const double _L; // Суммарная длина сетки
+    const double timeStep_; // Шаг по времени
+    const double step_; // Шаг сетки
+    const double L_; // Суммарная длина сетки
 
-    std::vector<Particle> _particles; // Массив частиц
+    std::vector<Particle> particles_; // Массив частиц
     std::vector<Cell> grid; // Расчётная сетка
 
     void weighting(); // Взвешивание
@@ -50,10 +52,14 @@ private:
 
     void moveParticles(); // Движение частиц
 
-    void saveGrid(double time, std::ofstream &writer) const; // Запись в файл
+    void saveParticles(double time) const;
+
+    void saveGrid(double time) const; // Запись в файл
 
 public:
     ES1(double timeStep, double step, double L, const std::vector<Particle> &particles);
+
+    void calc(double maxTime, int writeInterval);
 };
 
 #endif //INC_1D_PLASMA_ES1_HPP
